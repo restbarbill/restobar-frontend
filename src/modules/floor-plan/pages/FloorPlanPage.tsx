@@ -6,8 +6,10 @@ import { useVenueTables } from '../hooks/use-floor-plan';
 import { CreateTableModal } from '../components/CreateTableModal';
 
 export const FloorPlanPage: React.FC = () => {
-  const { data: tables, isLoading, isError, error, refetch } = useVenueTables();
+  const { data: rawTables, isLoading, isError, error, refetch } = useVenueTables();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const tables = Array.isArray(rawTables) ? rawTables : [];
 
   return (
     <div className="space-y-6">
@@ -36,7 +38,7 @@ export const FloorPlanPage: React.FC = () => {
 
       {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
 
-      {!isLoading && !isError && tables?.length === 0 && (
+      {!isLoading && !isError && tables.length === 0 && (
         <EmptyState
           title="Aún no hay mesas registradas en la base de datos"
           description="Crea las mesas de comedor, bancos de barra y mesas de billar para visualizarlas en el plano interactivo."
@@ -45,10 +47,10 @@ export const FloorPlanPage: React.FC = () => {
         />
       )}
 
-      {!isLoading && !isError && tables && tables.length > 0 && (
+      {!isLoading && !isError && tables.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {tables.map((table) => {
-            const isBilliard = table.category.startsWith('BILLIARD');
+            const isBilliard = table.category && table.category.startsWith('BILLIARD');
             return (
               <div
                 key={table.id}
