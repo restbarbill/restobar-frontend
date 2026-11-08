@@ -6,8 +6,10 @@ import { useTournaments } from '../hooks/use-tournament';
 import { CreateTournamentModal } from '../components/CreateTournamentModal';
 
 export const TournamentPage: React.FC = () => {
-  const { data: tournaments, isLoading, isError, error, refetch } = useTournaments();
+  const { data: rawTournaments, isLoading, isError, error, refetch } = useTournaments();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const tournaments = Array.isArray(rawTournaments) ? rawTournaments : [];
 
   return (
     <div className="space-y-6">
@@ -36,7 +38,7 @@ export const TournamentPage: React.FC = () => {
 
       {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
 
-      {!isLoading && !isError && tournaments?.length === 0 && (
+      {!isLoading && !isError && tournaments.length === 0 && (
         <EmptyState
           title="No hay torneos registrados en la base de datos"
           description="Organiza tu primer torneo de Bola 8, Bola 9 o Carambola. Los premios se calculan con precisión decimal en el servidor."
@@ -45,7 +47,7 @@ export const TournamentPage: React.FC = () => {
         />
       )}
 
-      {!isLoading && !isError && tournaments && tournaments.length > 0 && (
+      {!isLoading && !isError && tournaments.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {tournaments.map((t) => (
             <div
