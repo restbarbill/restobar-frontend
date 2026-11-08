@@ -25,4 +25,5 @@ export function useStopBilliardSession() {
       toast.error(extractErrorMessage(err));
     },
   });
+
 }
